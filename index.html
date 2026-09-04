@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sai Sabarish A — Firmware Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0b; --bg2:#131315; --line:#2a2a2e; --text:#eceef0; --muted:#8c8f96;
+    --red:#ff2d2d; --red-dim:#5c1414; --red-glow:rgba(255,45,45,0.35);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; font-size:16.5px; line-height:1.65; overflow-x:hidden; }
+  ::selection{ background:var(--red); color:#0a0a0b; }
+  a{ color:inherit; }
+  h1,h2,h3{ font-family:'Space Grotesk', sans-serif; }
+  .wrap{ max-width:1040px; margin:0 auto; padding:0 28px; }
+
+  header.top{
+    position:sticky; top:0; z-index:20; backdrop-filter:blur(10px);
+    background:rgba(10,10,11,0.75); border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center; padding:18px 28px;
+  }
+  header.top .id{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:15px; }
+  header.top .id span{ color:var(--red); }
+  header.top nav{ display:flex; gap:26px; }
+  header.top nav a{ text-decoration:none; color:var(--muted); font-size:14px; font-weight:500; transition:color .15s; }
+  header.top nav a:hover{ color:var(--text); }
+
+  /* HERO with animated circuit svg */
+  .hero{ position:relative; padding:90px 0 70px; overflow:hidden; }
+  .circuit-bg{ position:absolute; inset:0; z-index:0; opacity:0.55; pointer-events:none; }
+  .circuit-bg path{ stroke:var(--red); stroke-width:1.2; fill:none; stroke-dasharray:6 10; animation:dash 18s linear infinite; opacity:0.5; }
+  .circuit-bg circle{ fill:var(--red); opacity:0; animation:pulse 3.2s ease-in-out infinite; }
+  @keyframes dash{ to{ stroke-dashoffset:-400; } }
+  @keyframes pulse{ 0%,100%{ opacity:0; } 50%{ opacity:0.9; } }
+
+  .hero-inner{ position:relative; z-index:1; }
+  .hero .eyebrow{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:14px; color:var(--red); margin-bottom:18px; letter-spacing:0.01em; }
+  .hero h1{ font-size:clamp(2.4rem,5.5vw,3.8rem); font-weight:700; line-height:1.08; max-width:17ch; letter-spacing:-0.02em; }
+  .hero p.lede{ margin-top:22px; max-width:56ch; color:#b6b8bd; font-size:1.1rem; }
+  .cta-row{ margin-top:30px; display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:14.5px; padding:13px 26px; border-radius:8px; text-decoration:none; display:inline-block; transition:all .18s ease; }
+  .btn.primary{ background:var(--red); color:#0a0a0b; box-shadow:0 0 0 rgba(255,45,45,0); }
+  .btn.primary:hover{ box-shadow:0 0 26px var(--red-glow); transform:translateY(-2px); }
+  .btn.ghost{ background:transparent; color:var(--text); border:2px solid var(--line); }
+  .btn.ghost:hover{ border-color:var(--red); transform:translateY(-2px); }
+
+  .stat-row{ margin-top:56px; display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); position:relative; z-index:1; }
+  .stat-row div{ padding:18px 18px 0 0; }
+  .stat-row .num{ font-family:'Space Grotesk', sans-serif; font-size:2rem; font-weight:700; color:var(--red); }
+  .stat-row .lbl{ color:var(--muted); font-size:13px; margin-top:4px; max-width:16ch; }
+
+  /* marquee */
+  .marquee-wrap{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); overflow:hidden; padding:20px 0; background:var(--bg2); }
+  .marquee{ display:flex; gap:48px; white-space:nowrap; animation:scroll 26s linear infinite; width:max-content; }
+  .marquee span{ font-family:'Space Grotesk', sans-serif; font-size:14px; color:var(--muted); }
+  .marquee span b{ color:var(--red); font-weight:600; }
+  @keyframes scroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+  section{ padding:70px 0; border-top:1px solid var(--line); }
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:36px; flex-wrap:wrap; gap:8px; }
+  section h2{ font-size:1.8rem; font-weight:700; }
+  .count{ font-family:'Space Grotesk', sans-serif; color:var(--muted); font-size:14px; }
+
+  .about-body{ display:grid; grid-template-columns:1.4fr 1fr; gap:48px; }
+  .about-body p{ color:#b6b8bd; max-width:56ch; }
+  .about-body p + p{ margin-top:14px; }
+  .fact-list div{ display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-bottom:1px solid var(--line); font-size:14px; }
+  .fact-list span:first-child{ color:var(--muted); }
+  .fact-list span:last-child{ font-weight:500; text-align:right; }
+
+  /* alternating project rows */
+  .proj{ display:grid; grid-template-columns:220px 1fr; gap:36px; align-items:center; padding:44px 0; border-bottom:1px solid var(--line); }
+  .proj:last-child{ border-bottom:none; }
+  .proj:nth-child(even){ direction:rtl; }
+  .proj:nth-child(even) > *{ direction:ltr; }
+  .proj-icon{
+    width:100%; aspect-ratio:1/1; border-radius:16px; background:var(--bg2); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .proj:hover .proj-icon{ border-color:var(--red); box-shadow:0 0 30px var(--red-glow); }
+  .proj-icon svg{ width:56%; height:56%; }
+  .proj-num{ position:absolute; top:10px; left:14px; font-family:'Space Grotesk', sans-serif; font-size:12px; color:var(--muted); }
+  .proj-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; }
+  .proj h3{ font-size:1.35rem; font-weight:700; }
+  .proj .badge{ font-family:'Space Grotesk', sans-serif; font-size:12px; font-weight:600; color:var(--red); background:rgba(255,45,45,0.1); padding:5px 12px; border-radius:20px; white-space:nowrap; }
+  .proj p{ color:#b6b8bd; margin-top:12px; max-width:66ch; font-size:15px; }
+  .proj .stack{ margin-top:14px; color:var(--muted); font-size:13px; }
+  .proj .stack b{ color:var(--text); font-weight:600; }
+
+  .skill-groups{ display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+  .skill-groups h4{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:14.5px; margin-bottom:12px; color:var(--red); }
+  .skill-groups ul{ list-style:none; }
+  .skill-groups li{ padding:6px 0; border-bottom:1px solid var(--line); font-size:14px; color:#c7c9cd; }
+
+  /* timeline */
+  .timeline{ position:relative; padding-left:28px; }
+  .timeline::before{ content:""; position:absolute; left:5px; top:6px; bottom:6px; width:2px; background:linear-gradient(var(--red), var(--line)); }
+  .t-item{ position:relative; padding:0 0 36px 22px; }
+  .t-item:last-child{ padding-bottom:0; }
+  .t-item::before{ content:""; position:absolute; left:-28px; top:4px; width:12px; height:12px; border-radius:50%; background:var(--red); box-shadow:0 0 12px var(--red-glow); }
+  .t-item .when{ font-family:'Space Grotesk', sans-serif; font-weight:600; color:var(--red); font-size:13px; }
+  .t-item h3{ font-size:1.05rem; font-weight:700; margin-top:4px; }
+  .t-item p{ color:#b6b8bd; font-size:14px; margin-top:5px; }
+
+  .contact-panel{
+    position:relative; border-radius:18px; padding:56px 44px; overflow:hidden;
+    background:radial-gradient(circle at 20% 20%, rgba(255,45,45,0.18), transparent 60%), var(--bg2);
+    border:1px solid var(--line);
+  }
+  .contact-panel h2{ font-size:clamp(1.8rem,4.5vw,2.5rem); max-width:18ch; }
+  .contact-panel p{ color:#b6b8bd; margin-top:14px; max-width:48ch; font-size:1.05rem; }
+  .contact-panel .links{ margin-top:30px; display:flex; gap:14px; flex-wrap:wrap; }
+  .contact-panel .links a{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:14.5px;
+    text-decoration:none; color:var(--text); border:2px solid var(--line); padding:12px 20px; border-radius:8px;
+    transition:all .18s ease;
+  }
+  .contact-panel .links a:hover{ border-color:var(--red); box-shadow:0 0 20px var(--red-glow); }
+
+  footer{ padding:30px 0 50px; color:var(--muted); font-size:13px; }
+
+  @media (max-width:760px){
+    header.top nav{ display:none; }
+    .stat-row{ grid-template-columns:repeat(2,1fr); row-gap:22px; }
+    .about-body{ grid-template-columns:1fr; }
+    .skill-groups{ grid-template-columns:1fr; }
+    .proj, .proj:nth-child(even){ grid-template-columns:1fr; direction:ltr; }
+    .proj-icon{ width:96px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; }
+    .circuit-bg path, .circuit-bg circle, .marquee{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="id">SAI SABARISH A <span>·</span> firmware</div>
+  <nav>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <svg class="circuit-bg" viewBox="0 0 1040 480" preserveAspectRatio="xMidYMid slice">
+    <path d="M0,60 H260 V160 H520 V60 H1040" />
+    <path d="M0,220 H180 V320 H460 V220 H760 V380 H1040" />
+    <path d="M0,420 H340 V300 H620 V420 H1040" />
+    <circle cx="260" cy="60" r="4" />
+    <circle cx="520" cy="160" r="4" style="animation-delay:1s" />
+    <circle cx="460" cy="320" r="4" style="animation-delay:2s" />
+    <circle cx="620" cy="420" r="4" style="animation-delay:0.5s" />
+    <circle cx="760" cy="380" r="4" style="animation-delay:1.6s" />
+  </svg>
+  <div class="wrap hero-inner">
+    <div class="reveal in">
+      <div class="eyebrow">Firmware Engineer · 1.3+ years · Coimbatore, India</div>
+      <h1>I turn circuits into systems that actually run.</h1>
+      <p class="lede">
+        Embedded C and STM32 firmware for automotive, EV, and IoT applications — from a debugging
+        tool built into hardware, to a water tank monitor now deployed across multiple sites.
+        I've spent the last year and a half building hardware that has to work outside a lab, and
+        teaching 150+ others to do the same.
+      </p>
+      <div class="cta-row">
+        <a class="btn primary" href="#projects">See my work</a>
+        <a class="btn ghost" href="#contact">Hire me</a>
+      </div>
+    </div>
+
+    <div class="stat-row reveal in">
+      <div><div class="num">1.3+</div><div class="lbl">years building &amp; training</div></div>
+      <div><div class="num">150+</div><div class="lbl">students trained</div></div>
+      <div><div class="num">11</div><div class="lbl">shipped &amp; research projects</div></div>
+      <div><div class="num">Multi-site</div><div class="lbl">water tank system deployment</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee">
+    <span>STM32 <b>·</b></span><span>ESP32 <b>·</b></span><span>ARM Cortex-M <b>·</b></span><span>FreeRTOS <b>·</b></span>
+    <span>UART <b>·</b></span><span>SPI <b>·</b></span><span>I2C <b>·</b></span><span>CAN / LIN <b>·</b></span>
+    <span>Embedded C <b>·</b></span><span>MATLAB / Simulink <b>·</b></span><span>OpenCV <b>·</b></span><span>Python <b>·</b></span>
+    <span>STM32 <b>·</b></span><span>ESP32 <b>·</b></span><span>ARM Cortex-M <b>·</b></span><span>FreeRTOS <b>·</b></span>
+    <span>UART <b>·</b></span><span>SPI <b>·</b></span><span>I2C <b>·</b></span><span>CAN / LIN <b>·</b></span>
+    <span>Embedded C <b>·</b></span><span>MATLAB / Simulink <b>·</b></span><span>OpenCV <b>·</b></span><span>Python <b>·</b></span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section id="about">
+    <div class="section-head reveal"><h2>About</h2></div>
+    <div class="about-body reveal">
+      <div>
+        <p>
+          I work close to the hardware — writing firmware, debugging peripherals, and validating
+          designs against real timing and signal constraints, not just simulations. My work spans
+          STM32, ESP32, Raspberry Pi, and MATLAB/Simulink, applied to EV, ADAS, safety, and IoT
+          systems.
+        </p>
+        <p>
+          Since 2025 I've run my own freelance practice: training engineers in embedded systems
+          and FreeRTOS, and delivering firmware projects for clients from requirements through
+          validation.
+        </p>
+      </div>
+      <div class="fact-list">
+        <div><span>Role</span><span>Freelance Embedded Systems Trainer &amp; Developer</span></div>
+        <div><span>Education</span><span>B.E. ECE, Karpagam College of Engineering</span></div>
+        <div><span>Certification</span><span>Automotive Embedded Systems &amp; EVs, Pumo Technovation</span></div>
+        <div><span>Based in</span><span>Coimbatore, Tamil Nadu</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-head reveal"><h2>Projects</h2><span class="count">11 selected</span></div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">01</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><rect x="14" y="10" width="36" height="44" rx="3"/><rect x="20" y="18" width="24" height="16" rx="1"/><line x1="20" y1="42" x2="44" y2="42"/><line x1="20" y1="48" x2="34" y2="48"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>EmbedScope — Portable Debugging Tool</h3><span class="badge">In progress</span></div>
+        <p>A portable STM32F411 debugging tool for real-time UART, SPI, GPIO, ADC, PWM, and CAN validation, with a menu-driven ILI9341 TFT UI and UART terminal — firmware split into modular BSP, driver, UI, and application layers.</p>
+        <div class="stack"><b>Stack —</b> STM32F411, STM32 HAL, SPI, UART, ILI9341 TFT</div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">02</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><circle cx="32" cy="32" r="20"/><circle cx="32" cy="32" r="6"/><path d="M32 6v8M32 50v8M6 32h8M50 32h8"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>Real-Time Color &amp; Object Detection</h3><span class="badge">Computer vision</span></div>
+        <p>Modular embedded vision system on Raspberry Pi 4 for real-time detection and counting of colored objects, built with HSV-based segmentation and optimized to run stably on 1GB of memory without AI/ML.</p>
+        <div class="stack"><b>Stack —</b> Raspberry Pi 4, Python, OpenCV, HSV segmentation</div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">03</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><path d="M16 40 Q16 20 32 20 Q48 20 48 40" /><rect x="10" y="40" width="12" height="14" rx="2"/><rect x="42" y="40" width="12" height="14" rx="2"/><path d="M28 30 L36 30 L32 38 Z" fill="#ff2d2d" stroke="none"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>Smart Water Tank Management</h3><span class="badge">Deployed · multi-site</span></div>
+        <p>Automated water-level sensing with pump control, now deployed and running across multiple sites — cutting manual monitoring and overflow waste for the tanks it manages.</p>
+        <div class="stack"><b>Stack —</b> ultrasonic level sensing, relay-driven pump control, embedded C, ESP32</div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">04</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><rect x="8" y="24" width="48" height="20" rx="4"/><circle cx="20" cy="44" r="6"/><circle cx="44" cy="44" r="6"/><path d="M16 24 L24 14 H40 L48 24"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>Adaptive Cruise Control &amp; Lane Keeping Assist</h3><span class="badge">Scopus, CSSP-2025</span></div>
+        <p>Modeled and simulated ACC and Lane Keeping Assist in MATLAB/Simulink with PID-based speed and steering control, validated across lane deviation and curve-handling scenarios.</p>
+        <div class="stack"><b>Stack —</b> MATLAB/Simulink, ESP32, PID control, computer vision</div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">05</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><circle cx="32" cy="14" r="5"/><path d="M32 19 V32 M32 32 L16 44 M32 32 L48 44 M16 44 V54 M48 44 V54"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>STM32 4-DOF Robotic Arm</h3><span class="badge">Control systems</span></div>
+        <p>Controlled four servo motors via STM32 PWM timers (TIM2/TIM3) for precise arm movement, with interpolated multi-point motion and UART command parsing for repeatable control.</p>
+        <div class="stack"><b>Stack —</b> STM32F446RE, embedded C, PWM, USART</div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">06</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><path d="M32 8 C20 8 14 16 14 26 C14 34 18 38 18 44 H46 C46 38 50 34 50 26 C50 16 44 8 32 8Z"/><line x1="22" y1="50" x2="42" y2="50"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>Smart Helmet</h3><span class="badge">Safety / IoT</span></div>
+        <p>A rider-safety helmet that detects impacts and unsafe conditions in real time, sending a location-tagged alert so help can reach the rider faster.</p>
+        <div class="stack"><b>Stack —</b> ESP32, impact/IMU sensing, GPS, GSM alerting</div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">07</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><rect x="18" y="8" width="28" height="48" rx="4"/><path d="M26 26 Q32 18 38 26 Q32 34 26 26Z"/><line x1="32" y1="42" x2="32" y2="48"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>Smart Voting System</h3><span class="badge">Embedded security</span></div>
+        <p>A biometric voting terminal built to prevent duplicate votes and tampering, logging each cast vote against a verified fingerprint match.</p>
+        <div class="stack"><b>Stack —</b> fingerprint authentication, microcontroller-based logging, embedded C</div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">08</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><rect x="12" y="12" width="40" height="40" rx="6"/><path d="M24 24 L40 40 M40 24 L24 40"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>Edge AI Gesture Recognition</h3><span class="badge">Edge AI</span></div>
+        <p>An on-device gesture recognition system running entirely at the edge — no cloud round-trip — for low-latency control on resource-constrained hardware.</p>
+        <div class="stack"><b>Stack —</b> TinyML, on-device inference, embedded C/Python</div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">09</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><rect x="10" y="18" width="44" height="30" rx="3"/><circle cx="22" cy="33" r="4"/><line x1="34" y1="26" x2="46" y2="26"/><line x1="34" y1="33" x2="46" y2="33"/><line x1="34" y1="40" x2="42" y2="40"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>ESP32 Home Automation (Blynk)</h3><span class="badge">IoT</span></div>
+        <p>LED control and analog sensor monitoring over WiFi, controllable remotely through the Blynk app.</p>
+        <div class="stack"><b>Stack —</b> ESP32, Blynk, sensor interfacing</div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">10</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><rect x="10" y="26" width="44" height="16" rx="4"/><circle cx="20" cy="46" r="6"/><circle cx="44" cy="46" r="6"/><path d="M18 26 V18 H30 V26 M34 26 V20 H42 V26"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>Functional Electric Vehicle</h3><span class="badge">Hardware build</span></div>
+        <p>Designed and built a working EV from the ground up — drivetrain, control electronics, and power systems — road-tested to 50 km.</p>
+        <div class="stack"><b>Stack —</b> embedded C, motor control, power electronics</div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-icon">
+        <span class="proj-num">11</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="#ff2d2d" stroke-width="2.2"><path d="M8 40 L32 12 L56 40 Z"/><line x1="32" y1="12" x2="32" y2="4"/><line x1="20" y1="40" x2="20" y2="52"/><line x1="44" y1="40" x2="44" y2="52"/></svg>
+      </div>
+      <div>
+        <div class="proj-row"><h3>SAE India Fixed-Wing UAV</h3><span class="badge">Team project</span></div>
+        <p>Contributed to a fixed-wing UAV under the SAE India collegiate program.</p>
+        <div class="stack"><b>Stack —</b> avionics, fixed-wing UAV systems</div>
+      </div>
+    </div>
+
+  </section>
+
+  <section id="skills">
+    <div class="section-head reveal"><h2>Skills</h2></div>
+    <div class="skill-groups reveal">
+      <div>
+        <h4>Microcontrollers &amp; RTOS</h4>
+        <ul>
+          <li>STM32 (F1/F4), ARM Cortex-M</li>
+          <li>ESP32, PIC, AVR, 8051</li>
+          <li>FreeRTOS, task scheduling</li>
+          <li>Interrupt handling</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Protocols &amp; peripherals</h4>
+        <ul>
+          <li>UART, SPI, I2C, CAN, LIN</li>
+          <li>PWM, ADC, GPIO, Timers</li>
+          <li>Sensor interfacing</li>
+          <li>Peripheral configuration</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Tools &amp; languages</h4>
+        <ul>
+          <li>C, Embedded C, Python</li>
+          <li>STM32CubeIDE / CubeMX, Keil</li>
+          <li>Proteus, MATLAB/Simulink, Git</li>
+          <li>Oscilloscope, logic analyzer</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="section-head reveal"><h2>Experience</h2></div>
+    <div class="timeline reveal">
+      <div class="t-item">
+        <div class="when">2025 — Present</div>
+        <h3>Freelance Embedded Systems Trainer &amp; Project Developer</h3>
+        <p>Delivered hands-on embedded systems and FreeRTOS training to 150+ students across STM32, UART, SPI, I2C, PWM, and interrupts. Designed and developed embedded firmware for freelance clients end to end, plus code reviews and low-level hardware debugging.</p>
+      </div>
+      <div class="t-item">
+        <div class="when">2025 — 2026</div>
+        <h3>Professional Diploma, Automotive Embedded Systems &amp; EVs</h3>
+        <p>Pumo Technovation, Coimbatore.</p>
+      </div>
+      <div class="t-item">
+        <div class="when">2021 — 2025</div>
+        <h3>B.E. Electronics &amp; Communication Engineering</h3>
+        <p>Karpagam College of Engineering.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="contact-panel reveal">
+      <h2>Let's build something that has to work in the real world.</h2>
+      <p>Open to embedded systems and firmware roles — reach out directly or check out the code.</p>
+      <div class="links">
+        <a href="mailto:saisabarish.ce@gmail.com">Email</a>
+        <a href="tel:+919042201045">Call</a>
+        <a href="https://linkedin.com/in/sai-sabarish-embeddedsystem" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/saisabarish2004" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>Sai Sabarish A — 2026</footer>
+
+</div>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal:not(.in)');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
