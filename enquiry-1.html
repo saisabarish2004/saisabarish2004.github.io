@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Send an enquiry — Sai Sabarish A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0a0b; --bg2:#131315; --line:#2a2a2e; --text:#eceef0; --muted:#8c8f96;
+    --red:#ff2d2d; --red-glow:rgba(255,45,45,0.35);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; font-size:16.5px; line-height:1.65; min-height:100vh; position:relative; overflow-x:hidden; }
+  ::selection{ background:var(--red); color:#0a0a0b; }
+  a{ color:inherit; }
+  h1,h2,h3{ font-family:'Space Grotesk', sans-serif; }
+  .wrap{ max-width:640px; margin:0 auto; padding:0 24px; }
+
+  .circuit-bg{ position:fixed; inset:0; z-index:0; opacity:0.35; pointer-events:none; }
+  .circuit-bg path{ stroke:var(--red); stroke-width:1.2; fill:none; stroke-dasharray:6 10; animation:dash 18s linear infinite; opacity:0.5; }
+  .circuit-bg circle{ fill:var(--red); opacity:0; animation:pulse 3.2s ease-in-out infinite; }
+  @keyframes dash{ to{ stroke-dashoffset:-400; } }
+  @keyframes pulse{ 0%,100%{ opacity:0; } 50%{ opacity:0.9; } }
+
+  header.top{
+    position:sticky; top:0; z-index:20; backdrop-filter:blur(10px);
+    background:rgba(10,10,11,0.75); border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center; padding:18px 28px;
+  }
+  header.top .id{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:15px; }
+  header.top .id span{ color:var(--red); }
+  header.top a.back{
+    font-size:13.5px; color:var(--muted); text-decoration:none; display:flex; align-items:center; gap:6px;
+    transition:color .15s ease;
+  }
+  header.top a.back:hover{ color:var(--text); }
+
+  main{ position:relative; z-index:1; padding:64px 0 90px; }
+  .eyebrow{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13.5px; color:var(--red); margin-bottom:14px; }
+  h1{ font-size:clamp(1.9rem,4.5vw,2.5rem); font-weight:700; line-height:1.15; max-width:20ch; letter-spacing:-0.01em; }
+  main > .wrap > p.lede{ color:#b6b8bd; margin-top:16px; max-width:52ch; font-size:1.02rem; }
+
+  form{ margin-top:40px; display:flex; flex-direction:column; gap:22px; }
+  .field label{ display:block; font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13px; color:var(--muted); margin-bottom:8px; }
+  .field input, .field textarea{
+    width:100%; background:var(--bg2); border:1px solid var(--line); border-radius:10px; color:var(--text);
+    font-family:'Inter', sans-serif; font-size:15px; padding:13px 14px; transition:border-color .18s ease, box-shadow .18s ease;
+  }
+  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--red); box-shadow:0 0 0 3px rgba(255,45,45,0.14); }
+  .field textarea{ min-height:130px; resize:vertical; }
+
+  .type-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .type-opt{ position:relative; }
+  .type-opt input{ position:absolute; opacity:0; inset:0; cursor:pointer; }
+  .type-opt span{
+    display:inline-block; font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13.5px;
+    padding:10px 18px; border-radius:20px; border:1px solid var(--line); color:var(--muted);
+    transition:all .18s ease; cursor:pointer;
+  }
+  .type-opt input:checked + span{ border-color:var(--red); color:var(--text); background:rgba(255,45,45,0.12); box-shadow:0 0 16px var(--red-glow); }
+  .type-opt span:hover{ border-color:var(--red); color:var(--text); }
+
+  .submit-row{ margin-top:6px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .btn{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:14.5px; padding:14px 28px; border-radius:8px;
+    text-decoration:none; display:inline-block; border:none; cursor:pointer; transition:all .18s ease;
+    background:var(--red); color:#0a0a0b;
+  }
+  .btn:hover{ box-shadow:0 0 26px var(--red-glow); transform:translateY(-2px); }
+  .submit-note{ color:var(--muted); font-size:12.5px; max-width:34ch; }
+
+  .status{
+    margin-top:18px; font-size:13.5px; color:var(--red); display:none; padding:12px 14px;
+    border:1px solid var(--line); border-radius:10px; background:var(--bg2);
+  }
+  .status.show{ display:block; }
+  .status.ok{ color:#4ade80; border-color:rgba(74,222,128,0.35); }
+  .status.err{ color:#ff2d2d; border-color:rgba(255,45,45,0.35); }
+  .status.pending{ color:var(--muted); }
+
+  .btn[disabled]{ opacity:0.55; cursor:not-allowed; box-shadow:none !important; transform:none !important; }
+  .btn .spinner{
+    display:inline-block; width:13px; height:13px; border-radius:50%;
+    border:2px solid rgba(10,10,11,0.35); border-top-color:#0a0a0b; margin-right:8px;
+    vertical-align:-2px; animation:spin .7s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  footer{ padding:30px 0 40px; color:var(--muted); font-size:13px; text-align:center; }
+
+  @media (max-width:600px){
+    header.top{ padding:16px 20px; }
+    main{ padding:46px 0 70px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .circuit-bg path, .circuit-bg circle{ animation:none; }
+    .btn{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<svg class="circuit-bg" viewBox="0 0 1040 480" preserveAspectRatio="xMidYMid slice">
+  <path d="M0,60 H260 V160 H520 V60 H1040" />
+  <path d="M0,220 H180 V320 H460 V220 H760 V380 H1040" />
+  <path d="M0,420 H340 V300 H620 V420 H1040" />
+  <circle cx="260" cy="60" r="4" />
+  <circle cx="520" cy="160" r="4" style="animation-delay:1s" />
+  <circle cx="460" cy="320" r="4" style="animation-delay:2s" />
+</svg>
+
+<header class="top">
+  <div class="id">SAI SABARISH A <span>·</span> enquiry</div>
+  <a class="back" href="index.html">&larr; Back to portfolio</a>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="eyebrow">Product development &amp; training enquiries</div>
+    <h1>Tell me what you're building, and I'll get back to you.</h1>
+    <p class="lede">Fill this out and it lands straight in my inbox — no email app, no extra steps on your end.</p>
+
+    <form id="enquiryForm">
+      <div class="field">
+        <label for="name">Your name</label>
+        <input type="text" id="name" name="name" required placeholder="e.g. Arjun Mehta">
+      </div>
+
+      <div class="field">
+        <label for="email">Your email</label>
+        <input type="email" id="email" name="email" required placeholder="you@company.com">
+      </div>
+
+      <div class="field">
+        <label>What's this about?</label>
+        <div class="type-row" id="typeRow">
+          <label class="type-opt"><input type="radio" name="type" value="Product development" checked><span>Product development</span></label>
+          <label class="type-opt"><input type="radio" name="type" value="Technical training"><span>Technical training</span></label>
+          <label class="type-opt"><input type="radio" name="type" value="General enquiry"><span>Something else</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="topic">Project or topic, in a few words</label>
+        <input type="text" id="topic" name="topic" required placeholder="e.g. ESP32 sensor board for a client product">
+      </div>
+
+      <div class="field">
+        <label for="message">Tell me more</label>
+        <textarea id="message" name="message" required placeholder="What are you building or trying to get trained on? Timeline, scope, team size — whatever's useful."></textarea>
+      </div>
+
+      <div class="submit-row">
+        <button type="submit" class="btn" id="submitBtn">Send enquiry</button>
+        <span class="submit-note">Delivered straight to saisabarish.ce@gmail.com.</span>
+      </div>
+      <div class="status" id="statusMsg"></div>
+    </form>
+  </div>
+</main>
+
+<footer>Sai Sabarish A — 2026</footer>
+
+<script>
+  // ============================================================
+  // EMAILJS SETUP — fill these three values in with your own
+  // EmailJS account details, then this form sends straight to
+  // your inbox with no mail app involved. Steps to get them:
+  //
+  //  1. Create a free account at https://www.emailjs.com
+  //  2. Email Services → Add New Service → connect your Gmail
+  //     → copy the "Service ID" it gives you.
+  //  3. Email Templates → Create New Template. Use variables
+  //     {{from_name}} {{from_email}} {{enquiry_type}} {{topic}}
+  //     {{message}} in the template body, and set the template's
+  //     "To email" field to your own address (saisabarish.ce@gmail.com).
+  //     → copy the "Template ID".
+  //  4. Account → General → copy your "Public Key".
+  //  5. Paste all three below. That's it — no server needed.
+  // ============================================================
+  const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+  const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+  const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+  const FALLBACK_EMAIL = 'saisabarish.ce@gmail.com';
+
+  const isConfigured = ![EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID]
+    .some(v => v.startsWith('YOUR_'));
+
+  if (isConfigured && window.emailjs) {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
+
+  const form = document.getElementById('enquiryForm');
+  const statusMsg = document.getElementById('statusMsg');
+  const submitBtn = document.getElementById('submitBtn');
+
+  function paramType(){
+    const p = new URLSearchParams(window.location.search).get('type');
+    if (p === 'product') return 'Product development';
+    if (p === 'training') return 'Technical training';
+    return null;
+  }
+  const preset = paramType();
+  if (preset) {
+    document.querySelectorAll('input[name="type"]').forEach(r => { r.checked = (r.value === preset); });
+  }
+
+  function setStatus(text, kind){
+    statusMsg.textContent = text;
+    statusMsg.className = 'status show' + (kind ? ' ' + kind : '');
+  }
+
+  function mailtoFallback(name, email, type, topic, message){
+    const subject = `${type} — ${topic}`;
+    const body = `Name: ${name}\nEmail: ${email}\nEnquiry type: ${type}\nTopic: ${topic}\n\n${message}`;
+    return `mailto:${FALLBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const type = document.querySelector('input[name="type"]:checked').value;
+    const topic = document.getElementById('topic').value.trim();
+    const message = document.getElementById('message').value.trim();
+
+    if (!isConfigured) {
+      // EmailJS isn't set up yet — fall back to opening the email app
+      // so the form still works while you add your credentials above.
+      setStatus('Direct sending isn\u2019t configured yet — opening your email app instead.', 'pending');
+      window.location.href = mailtoFallback(name, email, type, topic, message);
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span>Sending…';
+    setStatus('Sending your enquiry…', 'pending');
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      from_name: name,
+      from_email: email,
+      enquiry_type: type,
+      topic: topic,
+      message: message
+    }).then(function(){
+      setStatus('Sent — thanks! I\u2019ll get back to you at ' + email + ' soon.', 'ok');
+      form.reset();
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send enquiry';
+    }).catch(function(err){
+      console.error('EmailJS error:', err);
+      setStatus('Something went wrong sending that directly — opening your email app so it still reaches me.', 'err');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send enquiry';
+      window.location.href = mailtoFallback(name, email, type, topic, message);
+    });
+  });
+</script>
+
+</body>
+</html>
